@@ -1,89 +1,31 @@
-import styled from 'styled-components/native';
-// import { AsyncStore } from 'react-native';
-// import {} from 'react-navigation';
-// import { Fab } from 'native-base';
+import { createStackNavigator } from 'react-navigation';
+import { ThemeProvider } from 'styled-components';
+import React, { Component } from 'react';
 import 'moment/locale/pt-br';
-import moment from 'moment';
-import React from 'react';
 
-import theme from './theme';
+import SetupScreen from './screens/setup';
+import InitScreen from './screens/init';
+import HomeScreen from './screens/home';
+import defaultTheme from './theme';
 
-const Loader = styled.ActivityIndicator``;
+const StackNavigator = createStackNavigator({
+  Setup: SetupScreen,
+  Init: InitScreen,
+  Home: HomeScreen,
+},{
+  initialRouteName: 'Init',
+});
 
-Loader.defaultProps = {
-  color: theme.palette.primary,
-  size: 'large',
-}
-
-const View = styled.View`
-background-color: ${theme.palette.background};
-justify-content: center;
-align-items: center;
-height: 100%;
-`;
-
-const Number = styled.Text`
-font-size: ${theme.typograph.size * 4};
-color: ${theme.palette.primary};
-`;
-
-const Text = styled.Text`
-font-size: ${theme.typograph.size};
-color: ${theme.palette.default};
-`;
-
-const SubText = styled.Text`
-font-size: ${theme.typograph.size * .75};
-color: ${theme.palette.secondary};
-`
-
-export default class App extends React.Component {
+export default class App extends Component {
   constructor(props){
     super(props);
-    this.state={
-      objective: 'pagamento',
-      offset: 5,
-    };
-    this.getNumber = message => message.replace(/[A-z]+/g, '');
-    this.tikTak = () => {
-      const endOfMonth = moment().endOf('month').format();
-      const plusOffset = moment(endOfMonth).add(this.state.offset, 'days').format();
-      this.setState({
-        day: moment().format('LL'),
-        time: moment().format('LTS'),
-        countdown: this.getNumber(moment(plusOffset).fromNow()),
-      });
-    }
-    this.startClock = () => {
-      this.setState({ clock: setInterval(this.tikTak, 1000)});
-    }
-    this.stopClock = () => {
-      clearInterval(this.state.clock);
-    }
-  }
-  
-  componentDidMount() {
-    moment.locale('pt-br');
-    this.startClock();
-  }
-
-  componentWillUnmount() {
-    this.stopClock();
   }
 
   render() {
-    if(!this.state.countdown) return <View><Loader/></View>;
     return (
-      <View>
-        <SubText>Falta{this.state.countdown > 1 ? 'm' : ''}</SubText>
-        <Number>{this.state.countdown}</Number>
-        <SubText>dias para {this.state.objective}</SubText>
-        {/* <SubText>Agora: {this.state.time}</SubText> */}
-      </View>
+      <ThemeProvider theme={defaultTheme}>
+        <StackNavigator/>
+      </ThemeProvider>
     );
   }
-}
-
-App.defaultProps = {
-  theme
 }
