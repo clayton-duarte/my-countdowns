@@ -1,4 +1,7 @@
 import styled from 'styled-components/native';
+// import { AsyncStore } from 'react-native';
+// import {} from 'react-navigation';
+// import { Fab } from 'native-base';
 import 'moment/locale/pt-br';
 import moment from 'moment';
 import React from 'react';
@@ -37,15 +40,18 @@ color: ${theme.palette.secondary};
 export default class App extends React.Component {
   constructor(props){
     super(props);
-    this.state={};
+    this.state={
+      objective: 'pagamento',
+      offset: 5,
+    };
     this.getNumber = message => message.replace(/[A-z]+/g, '');
     this.tikTak = () => {
       const endOfMonth = moment().endOf('month').format();
-      const plus5days = moment(endOfMonth).add(this.props.payday, 'days').format();
+      const plusOffset = moment(endOfMonth).add(this.state.offset, 'days').format();
       this.setState({
         day: moment().format('LL'),
         time: moment().format('LTS'),
-        countdown: this.getNumber(moment(plus5days).fromNow()),
+        countdown: this.getNumber(moment(plusOffset).fromNow()),
       });
     }
     this.startClock = () => {
@@ -69,14 +75,15 @@ export default class App extends React.Component {
     if(!this.state.countdown) return <View><Loader/></View>;
     return (
       <View>
+        <SubText>Falta{this.state.countdown > 1 ? 'm' : ''}</SubText>
         <Number>{this.state.countdown}</Number>
-        <SubText>dias para receber</SubText>
+        <SubText>dias para {this.state.objective}</SubText>
+        {/* <SubText>Agora: {this.state.time}</SubText> */}
       </View>
     );
   }
 }
 
 App.defaultProps = {
-  payday: 5,
   theme
 }
